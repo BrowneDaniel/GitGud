@@ -1,13 +1,38 @@
+{% load static from staticfiles %}
+
 <!DOCTYPE html>
 <html>
- <head>
+ <link>
      <meta charset="utf-8">
      <title>GitGud</title>
+     <link rel="stylesheet" href="{% static 'styles.css' %}">
+     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+
  </head>
 
-<body>
-
-<h1>GitGud</h1>
-<p>testing, is this thing on?</p>
-</body>
+ <body>
+    <h1>GitGud</h1>
+    <divclass = "users">
+        {% for user in users %}
+            <div class = "user">
+                <p>Here's some stats for {{ user.username }}:</p>
+                <h2>You're following {{ user.following }} users.</h2>
+                <h2>You have {{ user.followers }} followers.</h2>
+                <h2>Your repos have got {{ user.stars }} stars in total.</h2>
+                <h2>You have {{ user.repos }} repos.</h2>
+                <h2>You've used {{ user.languages }} languages.</h2>
+                <h1>On average, your friends:</h1>
+                <h2>Follow {{ user.friends_following }} users,</h2>
+                <h2>have {{  user.friends_followers }} followers,</h2>
+                <h2>have {{  user.friends_stars }} stars in total,</h2>
+                <h2>have {{ user.friends_repos }} repos,</h2>
+                <h2>and have used {{ user.friends_languages }} languages.</h2>
+                <h1>Here's ya language frequency pal x</h1>
+                {% for key, value in user.total_languages %}
+                   <h2>{{ key }}: {{ value }}</h2>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+ </body>
 </html>
