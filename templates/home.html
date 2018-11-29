@@ -1,38 +1,96 @@
 {% load static from staticfiles %}
 
 <!DOCTYPE html>
-<html>
- <link>
+<html lang="en">
+ <head>
      <meta charset="utf-8">
      <title>GitGud</title>
      <link rel="stylesheet" href="{% static 'styles.css' %}">
      <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
-
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+     <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
+     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
  </head>
 
  <body>
     <h1>GitGud</h1>
-    <divclass = "users">
+    <div class = "users">
         {% for user in users %}
             <div class = "user">
                 <p>Here's some stats for {{ user.username }}:</p>
-                <h2>You're following {{ user.following }} users.</h2>
-                <h2>You have {{ user.followers }} followers.</h2>
-                <h2>Your repos have got {{ user.stars }} stars in total.</h2>
-                <h2>You have {{ user.repos }} repos.</h2>
-                <h2>You've used {{ user.languages }} languages.</h2>
-                <h1>On average, your friends:</h1>
-                <h2>Follow {{ user.friends_following }} users,</h2>
-                <h2>have {{  user.friends_followers }} followers,</h2>
-                <h2>have {{  user.friends_stars }} stars in total,</h2>
-                <h2>have {{ user.friends_repos }} repos,</h2>
-                <h2>and have used {{ user.friends_languages }} languages.</h2>
-                <h1>Here's ya language frequency pal x</h1>
-                {% for key, value in user.total_languages %}
-                   <h2>{{ key }}: {{ value }}</h2>
-                {% endfor %}
-            </div>
+                <canvas id="myChart" width="400" height="200"></canvas>
+                <script>
+                        var ctx = document.getElementById("myChart");
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ["Following", "Followers", "Stars", "Repos", "Languages"],
+                                datasets: [{
+                                    label: 'You',
+                                    data: [{{ user.following }}, {{ user.followers }}, {{ user.stars }}, {{ user.repos }}, {{ user.languages }}],
+                                                backgroundColor:'rgba(255, 99, 132, 0.2)',
+                                                borderColor:'rgba(255,99,132,1)',
+                                                borderWidth: 1
+                                },
+                                    {
+                                        label: 'Your Friends (Average)',
+                                        data: [{{ user.friends_following }}, {{ user.friends_followers }}, {{ user.friends_stars }}, {{ user.friends_repos }}, {{ user.friends_languages }}],
+                                                backgroundColor:'rgba(54, 162, 235, 0.2)',
+                                                borderColor: 'rgba(54, 162, 235, 1)',
+                                                borderWidth: 1
+                                    }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero:true
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                </script>
+                <p>Here's a breakdown of your language usage across your repos: (sit tight, it's loading! if you have a lot of repos, it may take longer.)</p>
+                <canvas id="myPie" width="4" height="1"></canvas>
+                <script>
+                    {% block jquery %}
+                        var endpoint = 'data/';
+                        var defaultData = [];
+                        var labels = [];
+                        $.ajax({
+                            method: "GET",
+                            url: endpoint,
+                            success: function(data){
+                                labels = data.labels;
+                                defaultData = data.default;
+                                var pie = document.getElementById("myPie");
+                                var myPieChart = new Chart(pie,{
+                                type: 'pie',
+
+                                data: {
+                                    datasets: [{
+                                       data: defaultData,
+                                        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
+                                        }],
+                                    labels: labels,
+                                      },
+                                    options: {
+                                        responsive: true,
+                                    }
+                                });
+                            },
+                            error: function(error_data){
+                                console.log("error");
+                                console.log(error_data);
+                            }
+                        });
+                    {% endblock %}
+                </script>
         {% endfor %}
+        </div>
     </div>
  </body>
 </html>

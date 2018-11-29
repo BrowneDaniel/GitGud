@@ -1,3 +1,21 @@
 body{
-    background: #CC3434;
+    background: #dddddd;
+}
+
+.bar-chart {
+    background-color: #dddddd;
+}
+
+path {
+  stroke: black;
+	stroke-width: 2;
+	fill: none;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
+	stroke-width: 1;
+	shape-rendering: crispEdges;
 }

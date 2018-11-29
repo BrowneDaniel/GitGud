@@ -57,7 +57,7 @@ class User(models.Model):
         retval = len(set(keylist))
         return retval
 
-    def total_languages(self):
+    def total_languages_names(self):
         g = Github(self.username, self.pw)
         account = g.get_user()
         repos = account.get_repos()
@@ -66,7 +66,19 @@ class User(models.Model):
             test = repo.get_languages()
             keylist += list(test.keys())
 
-        retval = Counter(keylist).items()
+        retval = list(Counter(keylist).keys())
+        return retval
+
+    def total_languages_nums(self):
+        g = Github(self.username, self.pw)
+        account = g.get_user()
+        repos = account.get_repos()
+        keylist = []
+        for repo in repos:
+            test = repo.get_languages()
+            keylist += list(test.keys())
+
+        retval = list(Counter(keylist).values())
         return retval
 
     def friends_followers(self):
