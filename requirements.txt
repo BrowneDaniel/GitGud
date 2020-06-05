@@ -3,7 +3,7 @@ chardet==3.0.4
 chartjs==1.2
 Deprecated==1.2.4
 Django==1.11.29
-djangorestframework==3.9.0
+djangorestframework==3.9.1
 idna==2.7
 PyGithub==1.43.3
 PyJWT==1.6.4
